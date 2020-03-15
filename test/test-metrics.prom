@@ -1,0 +1,55 @@
+# HELP pubsub_count Count of events published
+# TYPE pubsub_count counter
+pubsub_count{event="ON_DATA_CHANGE",instance="",institute_id="one",job="api"} 4
+pubsub_count{event="ON_DATA_CHANGE",instance="",institute_id="number two",job="api"} 874
+pubsub_count{event="ON_DATA_CHANGE",instance="",institute_id="third-one",job="api"} 128
+# HELP pubsub_subscriptions Number of registered PubSub subscribers
+# TYPE pubsub_subscriptions gauge
+pubsub_subscriptions{event="ON_DATA_CHANGE",instance="",institute_id="one",job="api"} 3
+pubsub_subscriptions{event="ON_DATA_CHANGE",instance="",institute_id="number two",job="api"} 12
+pubsub_subscriptions{event="ON_DATA_CHANGE",instance="",institute_id="third-one",job="api"} 1
+# HELP push_failure_time_seconds Last Unix time when changing this group in the Pushgateway failed.
+# TYPE push_failure_time_seconds gauge
+push_failure_time_seconds{instance="",job="api"} 0
+push_failure_time_seconds{instance="",institute_id="one",job="api"} 0
+push_failure_time_seconds{instance="",institute_id="number two",job="api"} 0
+push_failure_time_seconds{instance="",institute_id="third-one",job="api"} 0
+# HELP push_time_seconds Last Unix time when changing this group in the Pushgateway succeeded.
+# TYPE push_time_seconds gauge
+push_time_seconds{instance="",job="api"} 1.5827112843066983e+09
+push_time_seconds{instance="",institute_id="one",job="api"} 1.5827112617848473e+09
+push_time_seconds{instance="",institute_id="number two",job="api"} 1.5827112411666646e+09
+push_time_seconds{instance="",institute_id="third-one",job="api"} 1.582711238755404e+09
+# HELP pushgateway_build_info A metric with a constant '1' value labeled by version, revision, branch, and goversion from which pushgateway was built.
+# TYPE pushgateway_build_info gauge
+pushgateway_build_info{branch="HEAD",goversion="go1.13.1",revision="cc61f46971f5eb7a5be64e80c2ee03857ddbb41a",version="1.0.0"} 1
+# HELP pushgateway_http_push_duration_seconds HTTP request duration for pushes to the Pushgateway.
+# TYPE pushgateway_http_push_duration_seconds summary
+pushgateway_http_push_duration_seconds{method="post",quantile="0.1"} NaN
+pushgateway_http_push_duration_seconds{method="post",quantile="0.5"} NaN
+pushgateway_http_push_duration_seconds{method="post",quantile="0.9"} NaN
+pushgateway_http_push_duration_seconds_sum{method="post"} 3116.889234546991
+pushgateway_http_push_duration_seconds_count{method="post"} 15203
+pushgateway_http_push_duration_seconds{method="put",quantile="0.1"} 0.202435124
+pushgateway_http_push_duration_seconds{method="put",quantile="0.5"} 0.222226898
+pushgateway_http_push_duration_seconds{method="put",quantile="0.9"} 0.404294298
+pushgateway_http_push_duration_seconds_sum{method="put"} 146177.1293732259
+pushgateway_http_push_duration_seconds_count{method="put"} 646402
+# HELP pushgateway_http_push_size_bytes HTTP request size for pushes to the Pushgateway.
+# TYPE pushgateway_http_push_size_bytes summary
+pushgateway_http_push_size_bytes{method="post",quantile="0.1"} NaN
+pushgateway_http_push_size_bytes{method="post",quantile="0.5"} NaN
+pushgateway_http_push_size_bytes{method="post",quantile="0.9"} NaN
+pushgateway_http_push_size_bytes_sum{method="post"} 6.302672e+06
+pushgateway_http_push_size_bytes_count{method="post"} 15203
+pushgateway_http_push_size_bytes{method="put",quantile="0.1"} 1160
+pushgateway_http_push_size_bytes{method="put",quantile="0.5"} 38325
+pushgateway_http_push_size_bytes{method="put",quantile="0.9"} 100873
+pushgateway_http_push_size_bytes_sum{method="put"} 2.2246372047e+10
+pushgateway_http_push_size_bytes_count{method="put"} 646402
+# HELP pushgateway_http_requests_total Total HTTP requests processed by the Pushgateway, excluding scrapes.
+# TYPE pushgateway_http_requests_total counter
+pushgateway_http_requests_total{code="200",handler="push",method="post"} 15203
+pushgateway_http_requests_total{code="200",handler="push",method="put"} 646402
+pushgateway_http_requests_total{code="200",handler="static",method="get"} 8
+pushgateway_http_requests_total{code="200",handler="status",method="get"} 16
