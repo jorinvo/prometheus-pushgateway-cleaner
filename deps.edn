@@ -1,10 +1,18 @@
 {:deps {org.clojure/clojure {:mvn/version "1.9.0"}
         org.clojure/tools.cli {:mvn/version "1.0.194"}
         org.martinklepsch/clj-http-lite {:mvn/version "0.4.1"}}
+
  :aliases {:run {:main-opts ["-m prometheus-pushgateway-cleaner"]}
+
            :dev {:extra-paths ["test"]
                  :extra-deps {cider/cider-nrepl {:mvn/version "0.21.1"}}
                  :main-opts ["-m" "nrepl.cmdline" "--middleware" "[cider.nrepl/cider-middleware]"]}
+
+           :test {:extra-paths ["test"]
+                  :extra-deps {com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner.git"
+                                                          :sha "f7ef16dc3b8332b0d77bc0274578ad5270fbfedd"}}
+                  :main-opts ["-m" "cognitect.test-runner"]}
+
            :native-image
            {:main-opts ["-m clj.native-image prometheus-pushgateway-cleaner"
                         "--report-unsupported-elements-at-runtime"

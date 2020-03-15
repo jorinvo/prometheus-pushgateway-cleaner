@@ -1,5 +1,5 @@
-(ns prometheus-pushgateway-cleaner.test
-  (:require [clojure.test :refer [deftest testing is]]
+(ns prometheus-pushgateway-cleaner-test
+  (:require [clojure.test :refer [deftest is]]
             [clj-http.lite.client :as http]
             [prometheus-pushgateway-cleaner :as p])
   (:import (java.net URI)))

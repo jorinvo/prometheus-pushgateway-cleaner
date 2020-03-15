@@ -3,8 +3,7 @@
             [clojure.pprint :refer [print-table]]
             [clj-http.lite.client :as http]
             [clj-http.lite.util :as http-util]
-            [clojure.tools.cli :as cli]
-            [clojure.instant :as instant])
+            [clojure.tools.cli :as cli])
   (:import (java.net URI))
   (:gen-class))
 
@@ -38,7 +37,7 @@ so make sure you really want to be doing this :)
 (def cli-options
   [[:long-opt "--metric-url"
     :required "METRIC_URL"
-    :desc "(REQUIRED) URI of the metric endpoint to crawl"
+    :desc "(REQUIRED) URI of the metric endpoint to crawl. Probably ends with /metrics/"
     :parse-fn parse-url
     :validate [some? "Most be set"]]
    [:long-opt "--job-url"
@@ -71,8 +70,8 @@ so make sure you really want to be doing this :)
    [:long-opt "--dry-run"
     :desc "Log results but don't delete anything"]
    [:long-opt "--report-metrics"
-    :desc "Push metric (see metric-name) to pushgateway which contains a unix timestamp (in s) of the last time cleaning finished sucessfully"]
-   [:long-opt "--metric-name"
+    :desc "Push metric (see success-metric) to pushgateway which contains a unix timestamp (in s) of the last time cleaning finished sucessfully"]
+   [:long-opt "--success-metric"
     :desc "Job name of the metric to push to pushgateway if --report-metrics is set"
     :default "prometheus_pushgateway_cleaner_last_success"]
    ["-s"
@@ -85,6 +84,7 @@ so make sure you really want to be doing this :)
    ["-h"
     "--help"
     "Print this message"]])
+
 
 (defn parse-line [line]
   (let [[_ lstr v] (re-matches #"^push_time_seconds\{(.+)\} (.+)" line)
@@ -115,26 +115,21 @@ so make sure you really want to be doing this :)
 (defn now-in-ms []
   (inst-ms (java.time.Instant/now)))
 
-(defn push-metric [{:keys [^URI job-url basic-auth metric-name now]}]
-  (http/request {:url (.resolve job-url ^String (http-util/url-encode metric-name))
+(defn push-metric [{:keys [^URI job-url basic-auth success-metric now]}]
+  (http/request {:url (.resolve job-url ^String (http-util/url-encode success-metric))
                  :basic-auth basic-auth
                  :method :put
-                 :body (str metric-name " " (ms->s now))}))
+                 :body (str success-metric " " (ms->s now))}))
 
-(defn run [{:as options
-            :keys [log
+
+(defn run [{:keys [log
                    metric-url
                    job-url
                    basic-auth
                    dry-run
                    expiration-in-minutes
                    report-metrics
-                   metric-name]}]
-  (log "Running with options:")
-  (log (with-out-str
-         (print-table (map (fn [[k v]] {"option" (name k)
-                                        "value" v})
-                           options))))
+                   success-metric]}]
   (when dry-run
     (log "Dry run: Won't delete any data"))
   (log "Fetching data from Prometheus pushgateway")
@@ -162,18 +157,19 @@ so make sure you really want to be doing this :)
         (do (log "Pushing success metric")
             (push-metric {:job-url job-url
                           :basic-auth basic-auth
-                          :metric-name metric-name
+                          :success-metric success-metric
                           :now (now-in-ms)})
             (log "Metric pushed"))))))
 
+
 (defn run-in-interval [{:as options :keys [log interval-in-minutes]}]
-  (log "Will run in interval")
+  (log "Running in interval")
   (loop []
-    (log "Running..")
+    (log "Running...")
     (run options)
-    (log (str "Will sleep for " interval-in-minutes " " (if (> interval-in-minutes 1)
-                                                          "minutes"
-                                                          "minute")))
+    (log (str "Sleeping for " interval-in-minutes " " (if (> interval-in-minutes 1)
+                                                        "minutes"
+                                                        "minute")))
     (Thread/sleep (min->ms interval-in-minutes))
     (recur)))
 
@@ -193,6 +189,11 @@ so make sure you really want to be doing this :)
         run-options (assoc options
                            :log log)]
     (log "Welcome to Prometheus pushgateway cleaner")
+    (log "Started with options:")
+    (log (with-out-str
+           (print-table (map (fn [[k v]] {"option" (name k)
+                                          "value" v})
+                             options))))
     (cond
       help          (do (log intro)
                         (log summary))
@@ -200,11 +201,7 @@ so make sure you really want to be doing this :)
       errors        (do (run! log errors)
                         (System/exit 1))
       (not metric-url) (do (log "--metric-url is required")
-                        (System/exit 1))
+                           (System/exit 1))
       interval-in-minutes (run-in-interval (assoc run-options
                                                   :interval-in-minutes interval-in-minutes))
       :else         (run run-options))))
-
-
-; TODO readme
-; TODO handle errors of http calls
