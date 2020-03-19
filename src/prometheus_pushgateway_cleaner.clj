@@ -13,7 +13,7 @@
 (def version "0.0.1")
 
 (def intro "
-> Delete old metric timeseries from Prometheus pushgateway
+> Delete old metric jobs from Prometheus pushgateway
 
 When you need this tool, you are most likely using pushgateway in an unindented way,
 so make sure you really want to be doing this :)

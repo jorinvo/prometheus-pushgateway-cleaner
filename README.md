@@ -1,5 +1,7 @@
 # prometheus-pushgateway-cleaner
 
+Delete old metric jobs from Prometheus pushgateway
+
 ## Intro
 
 ***This is a giant hack. Use with caution 🔥***
