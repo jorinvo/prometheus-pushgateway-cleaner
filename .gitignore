@@ -2,3 +2,4 @@
 classes
 prometheus-pushgateway-cleaner
 .nrepl-port
+.clj-kondo
