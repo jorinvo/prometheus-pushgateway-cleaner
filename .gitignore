@@ -1,5 +1,5 @@
-.cpcache
-classes
-prometheus-pushgateway-cleaner
-.nrepl-port
 .clj-kondo
+.cpcache
+.nrepl-port
+classes
+prometheus_pushgateway_cleaner

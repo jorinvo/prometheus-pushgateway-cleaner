@@ -1,6 +1,7 @@
 # prometheus-pushgateway-cleaner
 
-Delete old metric jobs from Prometheus pushgateway
+*Delete old metric jobs from [Prometheus](https://prometheus.io/) [pushgateway](https://github.com/prometheus/pushgateway)*
+
 
 ## Intro
 
@@ -27,7 +28,7 @@ Do you need to keep all of these metrics in the pushgateway forever?
 While this might not be the scenario the pushgateway is build for and maybe not even the ideal environment for Prometheus itself,
 maybe they are a good enough solution for now and what you invested in this setup might be worth sticking with it, for now.
 
-And it is *okay* that there is no time-to-live or expiration built into the pushgateway.
+And it is *okay* that there is no TTL (time-to-live) / expiration built into the pushgateway.
 It still allows you to build your own expiration strategy on top of it.
 
 *And this is exactly what `prometheus-pushgateway-cleaner` does.*
@@ -74,7 +75,7 @@ clj -Arun
 ### Building the application
 
 To build a binary using [GraalVM](https://www.graalvm.org/), run the following command,
-but set the bath to your `GRAALVM_HOME` installation:
+but set the path to your `GRAALVM_HOME` installation:
 
 ```
 GRAALVM_HOME=/Users/myuser/graalvm-ce-java11-19.3.1/Contents/Home clj -Anative-image

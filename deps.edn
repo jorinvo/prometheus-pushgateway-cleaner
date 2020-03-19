@@ -17,7 +17,9 @@
            {:main-opts ["-m clj.native-image prometheus-pushgateway-cleaner"
                         "--report-unsupported-elements-at-runtime"
                         "--initialize-at-build-time"
-                        "--enable-url-protocols=http,https"]
+                        "--enable-url-protocols=http,https"
+                        "--no-fallback"
+                        "--static"]
             :jvm-opts ["-Dclojure.compiler.direct-linking=true"]
             :extra-deps
             {clj.native-image
