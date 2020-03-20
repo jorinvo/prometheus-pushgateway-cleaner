@@ -75,10 +75,10 @@ clj -Arun
 ### Building the application
 
 To build a binary using [GraalVM](https://www.graalvm.org/), run the following command,
-but set the path to your `GRAALVM_HOME` installation:
+but set the path to your `GRAALVM_HOME` installation and your version:
 
 ```
-GRAALVM_HOME=/Users/myuser/graalvm-ce-java11-19.3.1/Contents/Home clj -Anative-image
+GRAALVM_HOME=/Users/myuser/graalvm-ce-java11-19.3.1/Contents/Home clj -Anative-image -Dversion=myversion
 ```
 
 

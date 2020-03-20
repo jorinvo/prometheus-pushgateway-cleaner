@@ -18,9 +18,11 @@ COPY . .
 RUN clojure -Atest
 
 # Build binary
-RUN clojure -Anative-image
+ARG VERSION
+RUN clojure -Anative-image -Dversion=$VERSION
+
 
 # Create minimal image
 FROM scratch
 COPY --from=BASE /opt/prometheus_pushgateway_cleaner /prometheus_pushgateway_cleaner
-CMD ["/prometheus_pushgateway_cleaner"]
+ENTRYPOINT ["/prometheus_pushgateway_cleaner"]

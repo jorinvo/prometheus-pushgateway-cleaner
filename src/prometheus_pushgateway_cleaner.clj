@@ -10,7 +10,10 @@
 (set! *warn-on-reflection* true)
 
 
-(def version "0.0.1")
+(def version
+  (or (System/getProperty "version")
+      "development"))
+
 
 (def intro "
 > Delete old metric jobs from Prometheus pushgateway
