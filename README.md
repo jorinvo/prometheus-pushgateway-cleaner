@@ -40,10 +40,30 @@ You can configure it to cleanup in an interval or you can use your own scheduler
 
 ## Setup
 
-### Installation
+The easiest way to run `prometheus-pushgateway-cleaner` is using the alpine-based Docker image,
+
+[available on dockerhub](https://hub.docker.com/repository/docker/jorinvo/prometheus-pushgateway-cleaner/tags?page=1):
+
+```
+docker run -it jorinvo/prometheus-pushgateway-cleaner
+```
+
+The images is around 17MB, starts up fast and uses little memory thanks to [GraalVM](https://www.graalvm.org/).
+
+If you like to run the image on the JVM from source directly, [see below](running-the-application).
 
 ### Configuration
 
+The image is configured using command line arguments.
+To see all options, run:
+
+```
+docker run -it jorinvo/prometheus-pushgateway-cleaner -h
+```
+
+- Setting `--metric-url` is required.
+- Try out your options first using the `--dry-run` flag.
+- And checkout `--report-metrics` since it is really nice to monitor that the cleaning works correctly.
 
 
 ## Development
