@@ -18,8 +18,8 @@ COPY . .
 RUN clojure -Atest
 
 # Build binary
-ARG VERSION
-RUN clojure -Anative-image -Dversion=$VERSION
+ARG GIT_REF
+RUN clojure -Anative-image -Dversion=$(echo $GIT_REF | cut -d/ -f3-)
 
 
 # Create minimal image

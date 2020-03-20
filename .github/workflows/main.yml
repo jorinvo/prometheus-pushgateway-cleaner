@@ -11,6 +11,6 @@ jobs:
         name: jorinvo/prometheus-pushgateway-cleaner
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-        buildargs: VERSION=${{ github.ref }}
+        buildargs: GIT_REF=${{ github.ref }}
         tag_names: true
         cache: true
