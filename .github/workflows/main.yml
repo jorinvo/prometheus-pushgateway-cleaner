@@ -13,3 +13,4 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
         buildargs: VERSION=${{ github.ref }}
         tag_names: true
+        cache: true
