@@ -191,6 +191,12 @@ so make sure you really want to be doing this :)
               stdout-logger)
         run-options (assoc options
                            :log log)]
+    (cond
+      help          (do (log intro)
+                        (log summary)
+                        (System/exit 0))
+      print-version (do (log version)
+                        (System/exit 0)))
     (log "Welcome to Prometheus pushgateway cleaner")
     (log "Started with options:")
     (log (with-out-str
@@ -198,9 +204,6 @@ so make sure you really want to be doing this :)
                                           "value" v})
                              options))))
     (cond
-      help          (do (log intro)
-                        (log summary))
-      print-version (log version)
       errors        (do (run! log errors)
                         (System/exit 1))
       (not metric-url) (do (log "--metric-url is required")
