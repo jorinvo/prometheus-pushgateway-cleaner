@@ -18,7 +18,6 @@
                         "--report-unsupported-elements-at-runtime"
                         "--initialize-at-build-time"
                         "--enable-url-protocols=http,https"
-                        "--enable-all-security-services"
                         "--no-fallback"
                         "--static"]
             :jvm-opts ["-Dclojure.compiler.direct-linking=true"]
