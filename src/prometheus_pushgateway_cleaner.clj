@@ -22,6 +22,7 @@ When you need this tool, you are most likely using pushgateway in an unindented 
 so make sure you really want to be doing this :)
 ")
 
+
 (defn parse-url [s]
   (URI. (if (= (last s) \/)
           s
