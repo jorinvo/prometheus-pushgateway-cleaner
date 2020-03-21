@@ -90,6 +90,10 @@ so make sure you really want to be doing this :)
     "Print this message"]])
 
 
+(defn silent-logger [& args] nil)
+(defn stdout-logger [& args] (apply println args))
+
+
 (defn parse-line [line]
   (let [[_ lstr v] (re-matches #"^push_time_seconds\{(.+)\} (.+)" line)
         all-labels (->> (str/split lstr #",")
@@ -123,11 +127,16 @@ so make sure you really want to be doing this :)
     (->> expired-lines
          (map #(resolve-job-url job-url %)))))
 
-(defn silent-logger [& args] nil)
-(defn stdout-logger [& args] (apply println args))
+(comment
+  (extract-expired-job-urls {:req {:body (slurp "test/test-metrics.prom")}
+                             :expiration-time (now-in-ms)
+                             :job-url (URI. "http://example.com")
+                             :log silent-logger}))
+
 
 (defn now-in-ms []
   (inst-ms (java.time.Instant/now)))
+
 
 (defn push-metric [{:keys [^URI job-url basic-auth ^String success-metric now]}]
   (http/request {:url (.resolve job-url ^String (URLEncoder/encode success-metric "UTF-8"))
