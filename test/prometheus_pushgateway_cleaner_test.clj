@@ -20,16 +20,23 @@
                                         metric-response
                                         (swap! reqs (fn [r] (conj r req)))))]
            (p/run {:log (fn [_] nil)
-                 :metric-url (URI. "https://example.com/metrics/")
-                 :job-url (URI. "https://example.com/metrics/job/")
-                 :expiration-in-minutes 60
-                 :metric-name "metric"})
+                   :metric-url (URI. "https://example.com/metrics/")
+                   :job-url (URI. "https://example.com/metrics/job/")
+                   :expiration-in-minutes 60
+                   :metric-name "metric"
+                   :report-metrics true
+                   :success-metric "metric"})
            @reqs))
        [{:url (URI. "https://example.com/metrics/job/api/institute_id/number+two/")
          :basic-auth nil
          :method :delete}
         {:url (URI. "https://example.com/metrics/job/api/institute_id/third-one/")
          :basic-auth nil
-         :method :delete}])))
+         :method :delete}
+        {:url (URI. "https://example.com/metrics/job/metric")
+         :basic-auth nil
+         :method :put
+         :body "metric 1582714861\n"}
+        ])))
 
 

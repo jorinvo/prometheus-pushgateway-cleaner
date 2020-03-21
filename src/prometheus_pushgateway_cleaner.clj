@@ -133,7 +133,7 @@ so make sure you really want to be doing this :)
   (http/request {:url (.resolve job-url ^String (URLEncoder/encode success-metric "UTF-8"))
                  :basic-auth basic-auth
                  :method :put
-                 :body (str success-metric " " (ms->s now) "\n")}))
+                 :body (str success-metric " " (long (ms->s now)) "\n")}))
 
 
 (defn run [{:keys [log
