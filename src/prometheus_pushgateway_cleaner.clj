@@ -92,26 +92,36 @@ so make sure you really want to be doing this :)
 
 (defn parse-line [line]
   (let [[_ lstr v] (re-matches #"^push_time_seconds\{(.+)\} (.+)" line)
-        all-labels (into {} (filter some? (map #(let [[a b] (str/split % #"=")
-                                                      lv (second (re-matches #"\"(.+)\"" b))] (when lv [a lv])) (str/split lstr #","))))]
+        all-labels (->> (str/split lstr #",")
+                        (map #(let [[a b] (str/split % #"=")
+                                    lv (second (re-matches #"\"(.+)\"" b))]
+                                (when lv
+                                  [a lv])))
+                        (filter some?)
+                        (into {}))]
     {:value (s->ms (Double/parseDouble v))
      :job (get all-labels "job")
      :labels (dissoc all-labels "job")}))
 
 (defn resolve-job-url [job-url {:keys [job labels]}]
-  (reduce
-    (fn [^URI uri ^String s]
-      (.resolve uri (str (URLEncoder/encode s "UTF-8") "/")))
-    job-url
-    (flatten (into [job] labels))))
+  (->> (into [job] labels)
+       flatten
+       (reduce
+         (fn [^URI uri ^String s]
+           (.resolve uri (str (URLEncoder/encode s "UTF-8") "/")))
+         job-url)))
 
 (defn extract-expired-job-urls [{:keys [req expiration-time job-url log]}]
-  (let [lines (map parse-line (filter #(str/starts-with? % "push_time_seconds") (str/split-lines (:body req))))
-        expired-lines (filter #(< (:value %) expiration-time) lines)]
+  (let [lines (->> (:body req)
+                   str/split-lines
+                   (filter #(str/starts-with? % "push_time_seconds"))
+                   (map parse-line))
+        expired-lines (->> lines
+                           (filter #(< (:value %) expiration-time)))]
     (log (str "Found " (count lines) " jobs"))
     (log (str (count expired-lines) " expired jobs"))
-    (map #(resolve-job-url job-url %)
-         expired-lines)))
+    (->> expired-lines
+         (map #(resolve-job-url job-url %)))))
 
 (defn silent-logger [& args] nil)
 (defn stdout-logger [& args] (apply println args))
@@ -179,7 +189,7 @@ so make sure you really want to be doing this :)
 
 
 (defn -main
-  "Handles args parsing and does the appropriate action."
+  "Handles args parsing and does the appropriate action"
   [& args]
   (let [{:keys [options errors summary]} (cli/parse-opts args cli-options)
         {:keys [help
@@ -205,10 +215,10 @@ so make sure you really want to be doing this :)
                                           "value" v})
                              options))))
     (cond
-      errors        (do (run! log errors)
-                        (System/exit 1))
-      (not metric-url) (do (log "--metric-url is required")
-                           (System/exit 1))
+      errors              (do (run! log errors)
+                              (System/exit 1))
+      (not metric-url)    (do (log "--metric-url is required")
+                              (System/exit 1))
       interval-in-minutes (run-in-interval (assoc run-options
                                                   :interval-in-minutes interval-in-minutes))
-      :else         (run run-options))))
+      :else               (run run-options))))
