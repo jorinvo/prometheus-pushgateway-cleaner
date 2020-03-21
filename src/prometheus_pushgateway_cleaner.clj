@@ -2,9 +2,9 @@
   (:require [clojure.string :as str]
             [clojure.pprint :refer [print-table]]
             [clj-http.lite.client :as http]
-            [clj-http.lite.util :as http-util]
             [clojure.tools.cli :as cli])
-  (:import (java.net URI))
+  (:import (java.net URI)
+           (java.net URLEncoder))
   (:gen-class))
 
 (set! *warn-on-reflection* true)
@@ -100,8 +100,8 @@ so make sure you really want to be doing this :)
 
 (defn resolve-job-url [job-url {:keys [job labels]}]
   (reduce
-    (fn [^URI uri s]
-      (.resolve uri (str (http-util/url-encode s) "/")))
+    (fn [^URI uri ^String s]
+      (.resolve uri (str (URLEncoder/encode s "UTF-8") "/")))
     job-url
     (flatten (into [job] labels))))
 
@@ -119,8 +119,8 @@ so make sure you really want to be doing this :)
 (defn now-in-ms []
   (inst-ms (java.time.Instant/now)))
 
-(defn push-metric [{:keys [^URI job-url basic-auth success-metric now]}]
-  (http/request {:url (.resolve job-url ^String (http-util/url-encode success-metric))
+(defn push-metric [{:keys [^URI job-url basic-auth ^String success-metric now]}]
+  (http/request {:url (.resolve job-url ^String (URLEncoder/encode success-metric "UTF-8"))
                  :basic-auth basic-auth
                  :method :put
                  :body (str success-metric " " (ms->s now))}))
