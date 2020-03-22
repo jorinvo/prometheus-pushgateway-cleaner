@@ -115,11 +115,18 @@ so make sure you really want to be doing this :)
            (.resolve uri (str (URLEncoder/encode s "UTF-8") "/")))
          job-url)))
 
-(defn extract-expired-job-urls [{:keys [req expiration-time job-url log]}]
-  (let [lines (->> (:body req)
+(defn extract-expired-job-urls
+  [{:keys [metrics
+           now
+           expiration-in-minutes
+           job-url
+           log]}]
+  (let [lines (->> metrics
                    str/split-lines
                    (filter #(str/starts-with? % "push_time_seconds"))
                    (map parse-line))
+        expiration-in-ms (min->ms expiration-in-minutes)
+        expiration-time (- now expiration-in-ms)
         expired-lines (->> lines
                            (filter #(< (:value %) expiration-time)))]
     (log (str "Found " (count lines) " jobs"))
@@ -128,8 +135,9 @@ so make sure you really want to be doing this :)
          (map #(resolve-job-url job-url %)))))
 
 (comment
-  (extract-expired-job-urls {:req {:body (slurp "test/test-metrics.prom")}
-                             :expiration-time (now-in-ms)
+  (extract-expired-job-urls {:metrics (slurp "test/test-metrics.prom")
+                             :now (now-in-ms)
+                             :expiration-in-minutes 60
                              :job-url (URI. "http://example.com")
                              :log silent-logger}))
 
@@ -145,26 +153,29 @@ so make sure you really want to be doing this :)
                  :body (str success-metric " " (long (ms->s now)) "\n")}))
 
 
-(defn run [{:keys [log
-                   metric-url
-                   job-url
-                   basic-auth
-                   dry-run
-                   expiration-in-minutes
-                   report-metrics
-                   success-metric]}]
+(defn run
+  [{:keys [log
+           metric-url
+           job-url
+           basic-auth
+           dry-run
+           expiration-in-minutes
+           report-metrics
+           success-metric]}]
   (when dry-run
     (log "Dry run: Won't delete any data"))
   (log "Fetching data from Prometheus pushgateway")
-  (let [req (http/request {:url metric-url
-                           :basic-auth basic-auth
-                           :method :get})
+  (let [{:keys [body]} (http/request
+                         {:url metric-url
+                          :basic-auth basic-auth
+                          :method :get})
         now (now-in-ms)
-        expiration-in-ms (min->ms expiration-in-minutes)
-        expired-job-urls (extract-expired-job-urls {:req req
-                                                    :expiration-time (- now expiration-in-ms)
-                                                    :job-url job-url
-                                                    :log log})]
+        expired-job-urls (extract-expired-job-urls
+                           {:metrics body
+                            :now now
+                            :expiration-in-minutes expiration-in-minutes
+                            :job-url job-url
+                            :log log})]
     (doseq [url expired-job-urls]
       (if dry-run
         (log (str "(Dry run) Deletion of job: " url))
@@ -181,7 +192,7 @@ so make sure you really want to be doing this :)
             (push-metric {:job-url job-url
                           :basic-auth basic-auth
                           :success-metric success-metric
-                          :now (now-in-ms)})
+                          :now now})
             (log "Metric pushed"))))))
 
 
