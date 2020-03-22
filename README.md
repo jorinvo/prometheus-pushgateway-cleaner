@@ -42,7 +42,7 @@ You can configure it to cleanup in an interval or you can use your own scheduler
 
 The easiest way to run `prometheus-pushgateway-cleaner` is using the alpine-based Docker image,
 
-[available on dockerhub](https://hub.docker.com/repository/docker/jorinvo/prometheus-pushgateway-cleaner/tags?page=1):
+[available on dockerhub](https://hub.docker.com/r/jorinvo/prometheus-pushgateway-cleaner/tags)
 
 ```
 docker run -it jorinvo/prometheus-pushgateway-cleaner
