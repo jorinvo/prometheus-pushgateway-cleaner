@@ -54,16 +54,22 @@ If you like to run the image on the JVM from source directly, [see below](runnin
 
 ### Configuration
 
-The image is configured using command line arguments.
-To see all options, run:
+The image is configured using command line arguments:
 
 ```
-docker run -it jorinvo/prometheus-pushgateway-cleaner -h
+    --metric-url METRIC_URL                               (REQUIRED) URI of the metric endpoint to crawl. Probably ends with /metrics/
+    --job-url JOB_URI                 METRIC_URL + /job/  URI to update metrics
+    --expiration-in-minutes DURATION  60                  Jobs not updated longer than the specified time will be deleted
+    --basic-auth BASIC_AUTH                               Request header(s)
+    --interval-in-minutes INTERVAL                        When set, process keeps running and repeats check after interval time
+    --dry-run                                             Log results but don't delete anything
+    --report-metrics                                      Push success-metric to pushgateway which contains a unix timestamp (in s) for the last sucessful cleaning
+lly
+    --success-metric                                      Job name of the metric to push to pushgateway if --report-metrics is set
+-s, --silent                                              Print nothing
+-v, --version                                             Print version
+-h, --help                                                Print this message
 ```
-
-- Setting `--metric-url` is required.
-- Try out your options first using the `--dry-run` flag.
-- And checkout `--report-metrics` since it is really nice to monitor that the cleaning works correctly.
 
 
 ## Development

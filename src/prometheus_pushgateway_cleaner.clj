@@ -74,7 +74,7 @@ so make sure you really want to be doing this :)
    [:long-opt "--dry-run"
     :desc "Log results but don't delete anything"]
    [:long-opt "--report-metrics"
-    :desc "Push metric (see success-metric) to pushgateway which contains a unix timestamp (in s) of the last time cleaning finished sucessfully"]
+    :desc "Push success-metric to pushgateway which contains a unix timestamp (in s) for the last sucessful cleaning"]
    [:long-opt "--success-metric"
     :desc "Job name of the metric to push to pushgateway if --report-metrics is set"
     :default "prometheus_pushgateway_cleaner_last_success"]
