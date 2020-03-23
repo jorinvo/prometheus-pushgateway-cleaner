@@ -1,4 +1,4 @@
-{:deps {org.clojure/clojure {:mvn/version "1.10.1"}
+{:deps {org.clojure/clojure {:mvn/version "1.10.2-alpha1"}
         org.clojure/tools.cli {:mvn/version "1.0.194"}
         org.martinklepsch/clj-http-lite {:mvn/version "0.4.1"}}
 
@@ -16,6 +16,7 @@
            :native-image
            {:main-opts ["-m clj.native-image prometheus-pushgateway-cleaner"
                         "--report-unsupported-elements-at-runtime"
+                        "-H:+ReportExceptionStackTraces"
                         "--initialize-at-build-time"
                         "--enable-url-protocols=http,https"
                         "--no-fallback"

@@ -23,6 +23,6 @@ RUN clojure -Anative-image -Dversion=$(echo $GIT_REF | cut -d/ -f3-)
 
 
 # Create minimal image
-FROM frolvlad/alpine-glibc:alpine-3.11_glibc-2.30
+FROM busybox:1.31.1-glibc
 COPY --from=BASE /opt/prometheus_pushgateway_cleaner /usr/bin/prometheus_pushgateway_cleaner
-ENTRYPOINT ["/usr/bin/prometheus_pushgateway_cleaner"]
+ENTRYPOINT ["prometheus_pushgateway_cleaner"]
