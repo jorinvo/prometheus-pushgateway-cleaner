@@ -48,7 +48,7 @@ The easiest way to run `prometheus-pushgateway-cleaner` is using the alpine-base
 docker run -it jorinvo/prometheus-pushgateway-cleaner
 ```
 
-The images is around 17MB, starts up fast and uses little memory thanks to [GraalVM](https://www.graalvm.org/).
+The images is around 12MB, starts up fast and uses little memory thanks to [GraalVM](https://www.graalvm.org/).
 
 If you like to run the image on the JVM from source directly, [see below](running-the-application).
 
