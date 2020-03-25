@@ -2,17 +2,18 @@
         org.clojure/tools.cli {:mvn/version "1.0.194"}
         org.martinklepsch/clj-http-lite {:mvn/version "0.4.1"}}
 
- :aliases {:run {:main-opts ["-m prometheus-pushgateway-cleaner"]}
-
+ :aliases {; Run production application directly
+           :run {:main-opts ["-m prometheus-pushgateway-cleaner"]}
+           ; Run nREPL for development
            :dev {:extra-paths ["test"]
                  :extra-deps {cider/cider-nrepl {:mvn/version "0.24.0"}}
                  :main-opts ["-m" "nrepl.cmdline" "--middleware" "[cider.nrepl/cider-middleware]"]}
-
+           ; Run tests
            :test {:extra-paths ["test"]
                   :extra-deps {com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner.git"
                                                           :sha "f7ef16dc3b8332b0d77bc0274578ad5270fbfedd"}}
                   :main-opts ["-m" "cognitect.test-runner"]}
-
+           ; Build binary
            :native-image
            {:main-opts ["-m clj.native-image prometheus-pushgateway-cleaner"
                         "--report-unsupported-elements-at-runtime"
@@ -22,7 +23,5 @@
                         "--no-fallback"
                         "--static"]
             :jvm-opts ["-Dclojure.compiler.direct-linking=true"]
-            :extra-deps
-            {clj.native-image
-             {:git/url "https://github.com/taylorwood/clj.native-image.git"
-              :sha "b3823a48be75122b9671c86ce5353a85589ef15f"}}}}}
+            :extra-deps {clj.native-image {:git/url "https://github.com/taylorwood/clj.native-image.git"
+                                           :sha "b3823a48be75122b9671c86ce5353a85589ef15f"}}}}}

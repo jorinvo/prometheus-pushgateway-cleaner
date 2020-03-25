@@ -94,6 +94,10 @@ so make sure you really want to be doing this :)
 (defn stdout-logger [& args] (apply println args))
 
 
+(defn now-in-ms []
+  (inst-ms (java.time.Instant/now)))
+
+
 (defn parse-line [line]
   (let [[_ lstr v] (re-matches #"^push_time_seconds\{(.+)\} (.+)" line)
         all-labels (->> (str/split lstr #",")
@@ -142,11 +146,11 @@ so make sure you really want to be doing this :)
                              :log silent-logger}))
 
 
-(defn now-in-ms []
-  (inst-ms (java.time.Instant/now)))
-
-
-(defn push-metric [{:keys [^URI job-url basic-auth ^String success-metric now]}]
+(defn push-metric
+  [{:keys [^URI job-url
+           basic-auth
+           ^String success-metric
+           now]}]
   (http/request {:url (.resolve job-url ^String (URLEncoder/encode success-metric "UTF-8"))
                  :basic-auth basic-auth
                  :method :put
@@ -196,7 +200,8 @@ so make sure you really want to be doing this :)
             (log "Metric pushed"))))))
 
 
-(defn run-in-interval [{:as options :keys [log interval-in-minutes]}]
+(defn run-in-interval
+  [{:as options :keys [log interval-in-minutes]}]
   (log "Running in interval")
   (loop []
     (log "Running...")
