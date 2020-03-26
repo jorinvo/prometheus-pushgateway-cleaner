@@ -53,3 +53,5 @@ pushgateway_http_requests_total{code="200",handler="push",method="post"} 15203
 pushgateway_http_requests_total{code="200",handler="push",method="put"} 646402
 pushgateway_http_requests_total{code="200",handler="static",method="get"} 8
 pushgateway_http_requests_total{code="200",handler="status",method="get"} 16
+
+push_time_seconds{instance="",job="success"} 1.582711238755404e+09
