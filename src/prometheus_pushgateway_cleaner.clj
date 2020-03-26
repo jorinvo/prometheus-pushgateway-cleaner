@@ -123,18 +123,21 @@ so make sure you really want to be doing this :)
   [{:keys [metrics
            now
            expiration-in-minutes
+           report-metrics
+           success-metric
            job-url
            log]}]
   (let [lines (->> metrics
                    str/split-lines
                    (filter #(str/starts-with? % "push_time_seconds"))
-                   (map parse-line))
+                   (map parse-line)
+                   (remove #(and report-metrics (= (:job %) success-metric))))
         expiration-in-ms (min->ms expiration-in-minutes)
         expiration-time (- now expiration-in-ms)
         expired-lines (->> lines
                            (filter #(< (:value %) expiration-time)))]
-    (log (str "Found " (count lines) " jobs"))
-    (log (str (count expired-lines) " expired jobs"))
+    (log (str "Found jobs: " (count lines)))
+    (log (str "Expired jobs: " (count expired-lines)))
     (->> expired-lines
          (map #(resolve-job-url job-url %)))))
 
@@ -177,6 +180,8 @@ so make sure you really want to be doing this :)
         expired-job-urls (extract-expired-job-urls
                            {:metrics body
                             :now now
+                            :report-metrics report-metrics
+                            :success-metric success-metric
                             :expiration-in-minutes expiration-in-minutes
                             :job-url job-url
                             :log log})]
@@ -241,8 +246,9 @@ so make sure you really want to be doing this :)
                              options))))
     (cond
       errors              (do (run! log errors)
+                              (log "\n\nSee ` -h` for more.")
                               (System/exit 1))
-      (not metric-url)    (do (log "--metric-url is required")
+      (not metric-url)    (do (log "--metric-url is required\n\nSee ` -h` for more.")
                               (System/exit 1))
       interval-in-minutes (run-in-interval (assoc run-options
                                                   :interval-in-minutes interval-in-minutes))
