@@ -213,7 +213,7 @@ so make sure you really want to be doing this :)
     (run options)
     (log (str "Sleeping for " interval-in-minutes " " (if (> interval-in-minutes 1)
                                                         "minutes"
-                                                        "minute")))
+                                                        "minute") "\n"))
     (Thread/sleep (min->ms interval-in-minutes))
     (recur)))
 
