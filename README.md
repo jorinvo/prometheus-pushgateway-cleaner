@@ -20,16 +20,16 @@ So you are still here?
 Unfortunately there are scenarios where you do not really have a choice but to do something non-optimal.
 
 What if you are happily using Prometheus for monitoring and alerting for many different systems
-and now suddenly you have a class of systems which run on hardware you do not control, behind a firewall you do not control.
+and now suddenly you have a class of systems which run on hardware you do not control, behind a firewall you do not control?
 What if this firewall only allows you to send metrics out and denies incoming requests?
-What if this class of systems are still dynamic and come and go?
+What if this class of systems are ephemeral jobs which come and go?
 Do you need to keep all of these metrics in the pushgateway forever?
 
 While this might not be the scenario the pushgateway is build for and maybe not even the ideal environment for Prometheus itself,
-maybe they are a good enough solution for now and what you invested in this setup might be worth sticking with it, for now.
+it would be great if they can be a good enough solution for now and since you invested a lot in this setup already and rather not have a completely separate setup for this one use case.
 
-And it is *okay* that there is no TTL (time-to-live) / expiration built into the pushgateway.
-It still allows you to build your own expiration strategy on top of it.
+Luckily it is *fine* that there is no TTL (time-to-live) / expiration built into the pushgateway.
+It provides you with everything so you can build your own expiration strategy on top of it.
 
 *And this is exactly what `prometheus-pushgateway-cleaner` does.*
 
@@ -37,10 +37,36 @@ It still allows you to build your own expiration strategy on top of it.
 
 You can configure it to cleanup in an interval or you can use your own scheduler to call it.
 
+### How does it work?
+
+`prometheus-pushgateway-cleaner` parses the metrics the pushgateway exposes
+and uses the `push_time_seconds` metric to determine if a job is expired.
+
+Then [DELETE](https://github.com/prometheus/pushgateway#delete-method) requests are sent to the pushgateway API accordingly.
+
+### Why not fork pushgateway?
+
+There have been many discussions around this feature and the Prometheus team made a very reasonable decision to not include this often misused feature into the actual pushgateway.
+
+Instead, they expose all the tools you need to implement your own cleanup logic.
+
+*`prometheus-pushgateway-cleaner` is only one possible solution.*
+
+Multiple people forked the project and implemented a TTL feature. Non of them are up to date with the current version of the pushgateway anymore.
+
+The premise of `prometheus-pushgateway-cleaner` is that separating concerns is much more sensible approach.
+
+### Alternatives
+
+If the only reason for using pushgateway instead of working directly with Prometheus is to get through firewall rules,
+then [pushprox](https://github.com/robustperception/pushprox) might be a good solution to your problem since it focuses on exactly this problem.
+
+If you need to work with the pushgateway and you need expiration, then `prometheus-pushgateway-cleaner` is here to help.
+
 
 ## Setup
 
-The easiest way to run `prometheus-pushgateway-cleaner` is using the alpine-based Docker image,
+The easiest way to run `prometheus-pushgateway-cleaner` is using the Docker image,
 
 [available on dockerhub](https://hub.docker.com/r/jorinvo/prometheus-pushgateway-cleaner/tags)
 
