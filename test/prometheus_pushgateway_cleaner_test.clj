@@ -30,10 +30,10 @@
      :report-metrics false})
 
 (def common-response
-  [{:url (URI. "https://example.com/metrics/job/api/institute_id/number+two/")
+  [{:url "https://example.com/metrics/job/api/institute_id/number+two"
     :basic-auth nil
     :method :delete}
-   {:url (URI. "https://example.com/metrics/job/api/institute_id/third-one/")
+   {:url "https://example.com/metrics/job/api/instance/30/institute_id/third-one"
     :basic-auth nil
     :method :delete}])
 
@@ -45,7 +45,7 @@
            (p/run common-args)
            @reqs))
        (conj common-response
-             {:url (URI. "https://example.com/metrics/job/success/")
+             {:url "https://example.com/metrics/job/success"
               :basic-auth nil
               :method :delete}))))
 

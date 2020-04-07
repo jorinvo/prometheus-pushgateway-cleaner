@@ -19,7 +19,7 @@ push_failure_time_seconds{instance="",institute_id="third-one",job="api"} 0
 push_time_seconds{instance="",job="api"} 1.5827112843066983e+09
 push_time_seconds{instance="",institute_id="one",job="api"} 1.5827112617848473e+09
 push_time_seconds{instance="",institute_id="number two",job="api"} 1.5827112411666646e+09
-push_time_seconds{instance="",institute_id="third-one",job="api"} 1.582711238755404e+09
+push_time_seconds{instance="30",institute_id="third-one",job="api"} 1.582711238755404e+09
 # HELP pushgateway_build_info A metric with a constant '1' value labeled by version, revision, branch, and goversion from which pushgateway was built.
 # TYPE pushgateway_build_info gauge
 pushgateway_build_info{branch="HEAD",goversion="go1.13.1",revision="cc61f46971f5eb7a5be64e80c2ee03857ddbb41a",version="1.0.0"} 1

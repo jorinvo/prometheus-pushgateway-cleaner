@@ -145,7 +145,7 @@ so make sure you really want to be doing this :)
   (extract-expired-job-urls {:metrics (slurp "test/test-metrics.prom")
                              :now (now-in-ms)
                              :expiration-in-minutes 60
-                             :job-url (URI. "http://example.com")
+                             :job-url (URI. "http://example.com/")
                              :log silent-logger}))
 
 
@@ -190,7 +190,7 @@ so make sure you really want to be doing this :)
         (log (str "(Dry run) Deletion of job: " url))
         (do
           (log (str "Deleting job: " url))
-          (http/request {:url url
+          (http/request {:url (-> url str drop-last str/join)
                          :basic-auth basic-auth
                          :method :delete}))))
     (log "Done")
