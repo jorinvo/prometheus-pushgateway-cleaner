@@ -84,7 +84,6 @@ The image is configured using command line arguments:
 
 ```
     --metric-url METRIC_URL                               (REQUIRED) URI of the metric endpoint to crawl. Probably ends with /metrics/
-    --job-url JOB_URI                 METRIC_URL + /job/  URI to update metrics
     --expiration-in-minutes DURATION  60                  Jobs not updated longer than the specified time will be deleted
     --basic-auth BASIC_AUTH                               Request header(s)
     --interval-in-minutes INTERVAL                        When set, process keeps running and repeats check after interval time

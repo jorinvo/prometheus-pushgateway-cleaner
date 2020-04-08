@@ -3,8 +3,8 @@
             [clojure.pprint :refer [print-table]]
             [clj-http.lite.client :as http]
             [clojure.tools.cli :as cli])
-  (:import (java.net URI)
-           (java.net URLEncoder))
+  (:import (java.net URI URLEncoder)
+           (java.util Base64))
   (:gen-class))
 
 (set! *warn-on-reflection* true)
@@ -44,14 +44,6 @@ so make sure you really want to be doing this :)
     :desc "(REQUIRED) URI of the metric endpoint to crawl. Probably ends with /metrics/"
     :parse-fn parse-url
     :validate [some? "Most be set"]]
-   [:long-opt "--job-url"
-    :required "JOB_URI"
-    :desc "URI to update metrics"
-    :parse-fn parse-url
-    :default-fn (fn [{:keys [^URI metric-url]}]
-                  (when metric-url
-                    (.resolve metric-url "job/")))
-    :default-desc "METRIC_URL + /job/"]
    [:long-opt "--expiration-in-minutes"
     :required "DURATION"
     :desc "Jobs not updated longer than the specified time will be deleted"
@@ -98,6 +90,12 @@ so make sure you really want to be doing this :)
   (inst-ms (java.time.Instant/now)))
 
 
+(defn encode-base64 [^String to-encode]
+  (.encodeToString (Base64/getEncoder) (.getBytes to-encode)))
+
+(defn base64-suffix [s]
+  (str s "@base64"))
+
 (defn parse-line [line]
   (let [[_ lstr v] (re-matches #"^push_time_seconds\{(.+)\} (.+)" line)
         all-labels (->> (str/split lstr #",")
@@ -112,11 +110,15 @@ so make sure you really want to be doing this :)
      :labels (dissoc all-labels "job")}))
 
 (defn resolve-job-url [job-url {:keys [job labels]}]
-  (->> (into [job] labels)
+  (->> labels
+       (map (fn [[k v]]
+              [(base64-suffix (URLEncoder/encode ^String k "UTF-8"))
+               (encode-base64 v)]))
+       (into [(encode-base64 job)])
        flatten
        (reduce
          (fn [^URI uri ^String s]
-           (.resolve uri (str (URLEncoder/encode s "UTF-8") "/")))
+           (.resolve uri (str s "/")))
          job-url)))
 
 (defn extract-expired-job-urls
@@ -139,13 +141,14 @@ so make sure you really want to be doing this :)
     (log (str "Found jobs: " (count lines)))
     (log (str "Expired jobs: " (count expired-lines)))
     (->> expired-lines
-         (map #(resolve-job-url job-url %)))))
+         (map #(resolve-job-url job-url %))
+         (map #(-> % str drop-last str/join)))))
 
 (comment
   (extract-expired-job-urls {:metrics (slurp "test/test-metrics.prom")
                              :now (now-in-ms)
                              :expiration-in-minutes 60
-                             :job-url (URI. "http://example.com/")
+                             :job-url (URI. "http://example.com/metrics/job@base64/")
                              :log silent-logger}))
 
 
@@ -154,15 +157,14 @@ so make sure you really want to be doing this :)
            basic-auth
            ^String success-metric
            now]}]
-  (http/request {:url (.resolve job-url ^String (URLEncoder/encode success-metric "UTF-8"))
+  (http/request {:url (.resolve job-url ^String (encode-base64 success-metric))
                  :basic-auth basic-auth
                  :method :put
                  :body (str success-metric " " (long (ms->s now)) "\n")}))
 
-
 (defn run
   [{:keys [log
-           metric-url
+           ^URI metric-url
            job-url
            basic-auth
            dry-run
@@ -177,6 +179,7 @@ so make sure you really want to be doing this :)
                           :basic-auth basic-auth
                           :method :get})
         now (now-in-ms)
+        job-url (.resolve metric-url "job@base64/")
         expired-job-urls (extract-expired-job-urls
                            {:metrics body
                             :now now
@@ -190,7 +193,7 @@ so make sure you really want to be doing this :)
         (log (str "(Dry run) Deletion of job: " url))
         (do
           (log (str "Deleting job: " url))
-          (http/request {:url (-> url str drop-last str/join)
+          (http/request {:url url
                          :basic-auth basic-auth
                          :method :delete}))))
     (log "Done")
