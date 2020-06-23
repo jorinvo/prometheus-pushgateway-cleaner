@@ -91,7 +91,9 @@ so make sure you really want to be doing this :)
 
 
 (defn encode-base64 [^String to-encode]
-  (.encodeToString (Base64/getEncoder) (.getBytes to-encode)))
+  (-> (Base64/getUrlEncoder)
+      .withoutPadding
+      (.encodeToString (.getBytes to-encode))))
 
 (defn base64-suffix [s]
   (str s "@base64"))

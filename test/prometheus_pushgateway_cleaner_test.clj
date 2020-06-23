@@ -30,21 +30,21 @@
      :report-metrics false})
 
 (def common-response
-  [{:url "https://example.com/metrics/job@base64/YXBp/institute_id@base64/bnVtYmVyIHR3bw=="
+  [{:url "https://example.com/metrics/job@base64/W0JANDFiYzkwYjQ/institute_id@base64/bnVtYmVyIHR3bw"
     :basic-auth nil
     :method :delete}
-   {:url "https://example.com/metrics/job@base64/YXBp/instance@base64/MzA=/institute_id@base64/dGhpcmQtb25l"
+   {:url "https://example.com/metrics/job@base64/YXBp/instance@base64/MzA/institute_id@base64/dGhpcmQtb25l"
     :basic-auth nil
     :method :delete}])
 
 (deftest sends-correct-delete-requests
   (let [reqs (atom [])]
     (with-redefs [p/now-in-ms mock-now
-                  http/request (mock-req reqs)]
+                 http/request (mock-req reqs)]
       (p/run common-args)
       (is (= @reqs
              (conj common-response
-                   {:url "https://example.com/metrics/job@base64/c3VjY2Vzcw=="
+                   {:url "https://example.com/metrics/job@base64/c3VjY2Vzcw"
                     :basic-auth nil
                     :method :delete}))))))
 
@@ -57,7 +57,7 @@
                     :success-metric "success"))
       (is (= @reqs
              (conj common-response
-                   {:url (URI. "https://example.com/metrics/job@base64/c3VjY2Vzcw==")
+                   {:url (URI. "https://example.com/metrics/job@base64/c3VjY2Vzcw")
                     :basic-auth nil
                     :method :put
                     :body "success 1582714861\n"}))))))
