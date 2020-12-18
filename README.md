@@ -132,6 +132,10 @@ but set the path to your `GRAALVM_HOME` installation and your version:
 GRAALVM_HOME=/Users/myuser/graalvm-ce-java11-19.3.1/Contents/Home clj -Anative-image -Dversion=myversion
 ```
 
+### Releasing
+
+To release a new version, create a new git tag and the Github action will do its magic.
+
 
 ## License
 
