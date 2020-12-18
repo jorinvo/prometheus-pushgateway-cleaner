@@ -100,11 +100,11 @@ so make sure you really want to be doing this :)
 
 (defn parse-line [line]
   (let [[_ lstr v] (re-matches #"^push_time_seconds\{(.+)\} (.+)" line)
-        all-labels (->> (str/split lstr #",")
-                        (map #(let [[a b] (str/split % #"=")
-                                    lv (second (re-matches #"\"(.+)\"" b))]
-                                (when lv
-                                  [a lv])))
+        all-labels (->> (str/split lstr #"\"")
+                        (partition 2 )
+                        (map (fn [[a b]]
+                               (when (< 0 (count b))
+                                 [(second (re-matches #"^,?(.+)=$" a)) b])))
                         (filter some?)
                         (into {}))]
     {:value (s->ms (Double/parseDouble v))

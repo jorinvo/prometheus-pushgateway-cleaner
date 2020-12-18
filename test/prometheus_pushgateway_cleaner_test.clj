@@ -46,7 +46,11 @@
              (conj common-response
                    {:url "https://example.com/metrics/job@base64/c3VjY2Vzcw"
                     :basic-auth nil
-                    :method :delete}))))))
+                    :method :delete}
+                   {:url "https://example.com/metrics/job@base64/c3VjY2Vzcw/instance@base64/d2l0aCwgY29tbWE"
+                    :basic-auth nil
+                    :method :delete}
+                   ))))))
 
 (deftest report-metrics
   (let [reqs (atom [])]

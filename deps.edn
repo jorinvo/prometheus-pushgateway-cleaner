@@ -1,7 +1,7 @@
 {:deps {org.clojure/clojure {:mvn/version "1.10.2-alpha1"}
         org.clojure/tools.cli {:mvn/version "1.0.194"}
         org.martinklepsch/clj-http-lite {:mvn/version "0.4.1"}}
-
+ :paths ["src"]
  :aliases {; Run production application directly
            :run {:main-opts ["-m prometheus-pushgateway-cleaner"]}
            ; Run nREPL for development
@@ -23,5 +23,5 @@
                         "--no-fallback"
                         "--static"]
             :jvm-opts ["-Dclojure.compiler.direct-linking=true"]
-            :extra-deps {clj.native-image {:git/url "https://github.com/taylorwood/clj.native-image.git"
+            :extra-deps {clj.native-image/clj.native-image {:git/url "https://github.com/taylorwood/clj.native-image.git"
                                            :sha "b3823a48be75122b9671c86ce5353a85589ef15f"}}}}}
