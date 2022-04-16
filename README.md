@@ -2,6 +2,15 @@
 
 *Delete old metric jobs from [Prometheus](https://prometheus.io/) [pushgateway](https://github.com/prometheus/pushgateway)*
 
+## Status
+
+Archived since not actively in use. Feel free to fork.
+
+## Alternatives
+
+Instead of relying on pushgateway give [pushprox](https://github.com/robustperception/pushprox) a try to get around firewalls.
+
+If you need to work with the pushgateway and you need expiration, then `prometheus-pushgateway-cleaner` is here to help.
 
 ## Intro
 
@@ -55,13 +64,6 @@ Instead, they expose all the tools you need to implement your own cleanup logic.
 Multiple people forked the project and implemented a TTL feature. Non of them are up to date with the current version of the pushgateway anymore.
 
 The premise of `prometheus-pushgateway-cleaner` is that separating concerns is much more sensible approach.
-
-### Alternatives
-
-If the only reason for using pushgateway instead of working directly with Prometheus is to get through firewall rules,
-then [pushprox](https://github.com/robustperception/pushprox) might be a good solution to your problem since it focuses on exactly this problem.
-
-If you need to work with the pushgateway and you need expiration, then `prometheus-pushgateway-cleaner` is here to help.
 
 
 ## Setup
